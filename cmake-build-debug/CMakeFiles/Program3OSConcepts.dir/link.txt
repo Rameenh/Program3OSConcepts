@@ -1,0 +1,1 @@
+/usr/bin/c++.exe -g  -Wl,--enable-auto-import CMakeFiles/Program3OSConcepts.dir/main.cpp.o  -o Program3OSConcepts.exe -Wl,--out-implib,libProgram3OSConcepts.dll.a -Wl,--major-image-version,0,--minor-image-version,0 
