@@ -23,38 +23,72 @@ bool queueContains(queue<int> a, int b){
     return false;
 }
 
+int queueContainsIndex(queue<int> a, int b) {
+    for (int i = a.size(); i > 0; i--) {
+        if (a.front() == b) {
+            return i;
+        }
+        a.pop();
+    }
+    return -1;
+}
+
 int LRU(int wss, int pageNumbers[]){
-    queue<int> FIFOqueue;
+    queue<int> LRUqueue;
     int counter = 0;
     int pageFaultCounter = 0;
 
-    for(int i=0; i<sizeof(pageNumbers)/sizeof(pageNumbers[0]); i++){
-        if(!queueContains(FIFOqueue, pageNumbers[i])){
+    for(int i=0; i<1000; i++){
+        if(!queueContains(LRUqueue, pageNumbers[i])){
             if(counter < wss) { //if the queue is not at max capacity
-                FIFOqueue.push(pageNumbers[i]);
+                LRUqueue.push(pageNumbers[i]);
                 counter++; //this will keep track to see if the queue is at max capacity
             }
             else{ //if the queue is at max capacity
-                FIFOqueue.pop(); //pop that last added page (the queue class is automatically FIFO with pop()
-                FIFOqueue.push(pageNumbers[i]); //push the new pageNumber in now that we have the oldest page removed
+                LRUqueue.pop(); //pop that last added page (the queue class is automatically FIFO with pop()
+                LRUqueue.push(pageNumbers[i]); //push the new pageNumber in now that we have the oldest page removed
                 pageFaultCounter++;
             }
         }
         else{
-            FIFOqueue.pop(); //we are "rejuvenating" or "refreshing" the old repeated page number
-            FIFOqueue.push(pageNumbers[i]); //this algorithm is the same as FIFO except
-        }
-    }
+            int pageNumIndex = LRUqueue.size() - queueContainsIndex(LRUqueue, pageNumbers[i]);
+            vector<int> queueTempFH;
+            vector<int> queueTempSH;
 
+            for (int i = 0; i < pageNumIndex; i++) {
+                queueTempFH.push_back(LRUqueue.front());
+                LRUqueue.pop();
+            }
+            LRUqueue.pop(); //this is the page number we're moving to the front
+
+            int sizeForSH = LRUqueue.size();
+
+            for (int i = 0; i < sizeForSH; i++) {
+                queueTempSH.push_back(LRUqueue.front());
+                LRUqueue.pop();
+            }
+
+            for (int i = 0; i < queueTempFH.size(); i++) {
+                LRUqueue.push(queueTempFH.at(i));
+            }
+
+            for (int i = 0; i < queueTempSH.size(); i++) {
+                LRUqueue.push(queueTempSH.at(i));
+            }
+
+            LRUqueue.push(pageNumbers[i]);
+        }
+        }
     return pageFaultCounter;
 }
+
 
 int FIFO(int wss, int pageNumbers[]){
     queue<int> FIFOqueue;
     int counter = 0;
     int pageFaultCounter = 0;
 
-        for(int i=0; i<sizeof(pageNumbers)/sizeof(pageNumbers[0]); i++){
+        for(int i=0; i<1000; i++){
             if(!queueContains(FIFOqueue, pageNumbers[i])){
                 if(counter < wss) { //if the queue is not at max capacity
                     FIFOqueue.push(pageNumbers[i]);
@@ -67,7 +101,6 @@ int FIFO(int wss, int pageNumbers[]){
                 }
         }
     }
-
     return pageFaultCounter;
 }
 
@@ -94,7 +127,7 @@ int Clock(int wss, int pageNumbers[]){ //we will have to create our own "queue" 
     int pointer=0; //initialized to the first position in our queue
     int pageReferenced; //initialize a variable to store the index of a referenced page number
     int pageFaultCount = 0; //initialize the counter for page faults to zero
-    for(int i=0; i<sizeof(pageNumbers)/sizeof(pageNumbers[0]); i++){
+    for(int i=0; i<1000; i++){
         if(!arrayContains(workingSetArray, pageNumbers[i], wss)){ //if our working set does not contain this incoming page number
             if(counter < wss){ //as long as there is an empty slot in the working set, no need to do any page replacement, just tack it on the end
                 workingSetArray[pointer][0]=pageNumbers[i];
@@ -128,7 +161,6 @@ int Clock(int wss, int pageNumbers[]){ //we will have to create our own "queue" 
 }
 
 int main() {
-
     int LRUFaults[20] = {}; //we will keep the faults for FIFO, clock and LRU algorithms in these arrays for every
     int FIFOFaults[20] = {}; //working set and calculate their average in the end
     int ClockFaults[20] = {};
