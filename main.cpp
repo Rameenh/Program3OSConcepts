@@ -18,7 +18,6 @@
 
 #include <iostream>
 #include <random>
-#include <chrono>
 #include <queue>
 
 using namespace std;
@@ -286,6 +285,7 @@ int Clock(int wss, int pageNumbers[]) { // we will have to create our own "queue
 * main     O/P      int Status code (not currently used)
 **************************************************************************/
 int main() {
+    cout << "Please wait, the program should finish in around 6 minutes due to needing to calculate 1000 poisson numbers 1000 times\n";
     int LRUFaults[20] = {};       //we will keep the faults for FIFO, clock and LRU algorithms in these arrays for every
     int FIFOFaults[20] = {};      //working set and calculate their average in the end
     int ClockFaults[20] = {};
@@ -298,13 +298,12 @@ int main() {
 
         for (int pageNumGen = 0; pageNumGen < 1000; pageNumGen++) { //we are trying to generate 1,000 numbers
 
-            unsigned seed = chrono::system_clock::now().time_since_epoch().count(); //creating the random seed
-            default_random_engine generator (seed);                                 //assigning seed to random engine
-            poisson_distribution<int> distribution (10); //declaring pre-defined poisson distribution random
-                                                               // number generator with lambda = 10 as parameter
+            default_random_engine RNG (random_device{}());   //assigning seed to random generator
+            poisson_distribution<int> poissonDist (10);   //declaring pre-defined poisson distribution random
+                                                                // number generator with lambda = 10 as parameter
 
             for (int i=0; i<1000; ++i){                       //loop for all 1,000 page numbers we need
-                pageNumbers[i] = distribution(generator);  //generate a random number that fits the poisson
+                pageNumbers[i] = poissonDist(RNG);         //generate a random number that fits the poisson
                                                               // distribution with lambda = 10 and assign it to index
                                                               // in page number array
             }
@@ -317,9 +316,6 @@ int main() {
             FIFOFaults[wss] += FIFO(wss, pageNumbers);   //same as above but for the FIFO algorithm
             ClockFaults[wss] += Clock(wss, pageNumbers); //same as above but for the Clock algorithm
         }
-
-
-        cout << "please wait, this will take ~5 minutes due to generating 1000 random poisson numbers 1000 times, processor utilization may increase moderately" << endl;
     }
     for (int wss = 2; wss <= 20; wss++) { //wss = working set size; we are working with 2 to 20 working set size
         LRUFaults[wss] /= 1000;           //will calculate the average, the last loop added all the values up so all
@@ -328,6 +324,7 @@ int main() {
         FIFOFaults[wss] /= 1000;          //same as above but for the FIFO algorithm
         ClockFaults[wss] /= 1000;         //same as above but for the Clock algorithm
     }
+
     cout << "Average number of LRU page faults for working set size 2-20: ";
     for (int wss = 2; wss <= 20; wss++)       //wss = working set size; we are working with 2 to 20 working set size
         cout << LRUFaults[wss] << " ";        //lists every element in LRUfaults with a space in between
