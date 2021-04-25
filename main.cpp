@@ -228,7 +228,7 @@ int Clock(int wss, int pageNumbers[]) { // we will have to create our own "queue
     int pointer = 0;                    // initialized to the first position in our queue
     int pageReferenced;                 // initialize a variable to store the index of a referenced page number
     int pageFaultCount = 0;             // initialize the counter for page faults to zero
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 1000; i++) {
         if (!arrayContains(workingSetArray, pageNumbers[i],
                            wss)) {      // if our working set does not contain this incoming page number
             if (counter < wss) {        // as long as there is an empty slot in the working set,
@@ -318,29 +318,30 @@ int main() {
             ClockFaults[wss] += Clock(wss, pageNumbers); //same as above but for the Clock algorithm
         }
 
-        for (int wss = 2; wss <= 20; wss++) { //wss = working set size; we are working with 2 to 20 working set size
-            LRUFaults[wss] /= 1000;           //will calculate the average, the last loop added all the values up so all
-                                              //we have to do is divide each slot by 1000 since we added up 1000's
-                                              // worth of numbers
-            FIFOFaults[wss] /= 1000;          //same as above but for the FIFO algorithm
-            ClockFaults[wss] /= 1000;         //same as above but for the Clock algorithm
-        }
 
-        cout << "Average number of LRU page faults for working set size 2-20: ";
-        for (int wss = 2; wss <= 20; wss++)       //wss = working set size; we are working with 2 to 20 working set size
-            cout << LRUFaults[wss] << " ";        //lists every element in LRUfaults with a space in between
-        cout << endl;
-
-        cout << "Average number of FIFO page faults for working set size 2-20: ";
-        for (int wss = 2; wss <= 20; wss++)       //wss = working set size; we are working with 2 to 20 working set size
-            cout << FIFOFaults[wss] << " ";       //lists every element in FIFOfaults with a space in between
-        cout << endl;
-
-        cout << "Average number of Clock page faults for working set size 2-20: ";
-        for (int wss = 2; wss <= 20; wss++)       //wss = working set size; we are working with 2 to 20 working set size
-            cout << ClockFaults[wss] << " ";      //lists every element in Clockfaults with a space in between
-        cout << endl;
+        cout << "please wait, this will take ~5 minutes due to generating 1000 random poisson numbers 1000 times, processor utilization may increase moderately" << endl;
     }
+    for (int wss = 2; wss <= 20; wss++) { //wss = working set size; we are working with 2 to 20 working set size
+        LRUFaults[wss] /= 1000;           //will calculate the average, the last loop added all the values up so all
+                                          //we have to do is divide each slot by 1000 since we added up 1000's
+                                          // worth of numbers
+        FIFOFaults[wss] /= 1000;          //same as above but for the FIFO algorithm
+        ClockFaults[wss] /= 1000;         //same as above but for the Clock algorithm
+    }
+    cout << "Average number of LRU page faults for working set size 2-20: ";
+    for (int wss = 2; wss <= 20; wss++)       //wss = working set size; we are working with 2 to 20 working set size
+        cout << LRUFaults[wss] << " ";        //lists every element in LRUfaults with a space in between
+    cout << endl;
+
+    cout << "Average number of FIFO page faults for working set size 2-20: ";
+    for (int wss = 2; wss <= 20; wss++)       //wss = working set size; we are working with 2 to 20 working set size
+        cout << FIFOFaults[wss] << " ";       //lists every element in FIFOfaults with a space in between
+    cout << endl;
+
+    cout << "Average number of Clock page faults for working set size 2-20: ";
+    for (int wss = 2; wss <= 20; wss++)       //wss = working set size; we are working with 2 to 20 working set size
+        cout << ClockFaults[wss] << " ";      //lists every element in Clockfaults with a space in between
+    cout << endl;
     return 0;
 }
 
